@@ -136,7 +136,7 @@ class Program
     static void Main(string[] args)
     {
         // First Implementation 'should' be more memory efficient
-        PrimesUpTo(100000,true);
-        OriginalCode.PrimesUpTo(100000, true);
+        PrimesUpTo(1000000,true);
+        OriginalCode.PrimesUpTo(1000000, true);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 class Program
 {
@@ -43,8 +44,9 @@ class Program
                 break;
 
             wheel_length = next_wheel_length; // update wheel size to wheel limit
-            next_prime = 5; // for obtaining the next prime
             temp_list.Clear();
+
+            next_prime = 5; // for obtaining the next prime
             foreach (int number_in_wheel in wheel)
             {
                 if (next_prime == 5 && number_in_wheel > current_prime)
@@ -67,11 +69,33 @@ class Program
         }
 
         temp_list.Clear();
-        foreach (int number_in_wheel in wheel)
+
+        int threadsNumber = 4;
+        Parallel.For(0, threadsNumber, threadIndex =>
         {
-            if (number_in_wheel % biggest_prime == 0 || number_in_wheel % second_biggest_prime == 0)
-                temp_list.Add(number_in_wheel);
-        }
+            List<int> sectionList = new List<int>();
+            SortedSet<int>.Enumerator wheelEnum = wheel.GetEnumerator();
+            for (int i = 0; i < threadIndex; i++)
+            {
+                wheelEnum.MoveNext();
+            }
+            while (wheelEnum.MoveNext())
+            {
+                int number_in_wheel = wheelEnum.Current;
+                if (number_in_wheel % biggest_prime == 0 || number_in_wheel % second_biggest_prime == 0)
+                    sectionList.Add(number_in_wheel);
+                for (int i = 0; i < threadsNumber - 1; i++)
+                {
+                    wheelEnum.MoveNext();
+                }
+            }
+            lock (temp_list)
+            {
+                temp_list.AddRange(sectionList);
+            }
+        });
+
+
         // Remove Step
         foreach (var itm in temp_list)
         {
@@ -112,7 +136,7 @@ class Program
     static void Main(string[] args)
     {
         // First Implementation 'should' be more memory efficient
-        PrimesUpTo(1000000,true);
-        OriginalCode.PrimesUpTo(1000000, true);
+        PrimesUpTo(1000,true);
+        //OriginalCode.PrimesUpTo(1000, true);
     }
 }

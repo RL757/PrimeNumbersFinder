@@ -70,7 +70,7 @@ class Program
 
         temp_list.Clear();
 
-        int threadsNumber = 4;
+        int threadsNumber = 6;
         Parallel.For(0, threadsNumber, threadIndex =>
         {
             List<int> sectionList = new List<int>();
